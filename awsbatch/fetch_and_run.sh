@@ -26,6 +26,7 @@ error_exit () {
 # Check that necessary programs are available
 which aws >/dev/null 2>&1 || error_exit "Unable to find AWS CLI executable."
 which unzip >/dev/null 2>&1 || error_exit "Unable to find unzip executable."
+which zip >/dev/null 2>&1 || error_exit "Unable to find zip executable."
 
 # Create a temporary directory to hold the downloaded contents, and make sure
 # it's removed later, unless the user set KEEP_BATCH_FILE_CONTENTS.

@@ -1,6 +1,6 @@
 FROM mcvine/mcvine:1.4.1.dev
 
-RUN apt-get install -y unzip
+RUN apt-get install -y unzip zip
 RUN rm -rf /var/lib/apt/lists/*
 SHELL ["conda", "run", "-n", "mcvine", "/bin/bash", "-c"]
 RUN which python
