@@ -5,6 +5,7 @@ MAINTAINER "Jiao Lin <jiao.lin@gmail.com>"
 LABEL Description="MCViNE software"
 
 RUN apt-get install -y make time
+RUN apt-get install -y freeglut3-dev libglu1-mesa
 
 RUN conda config --add channels conda-forge
 RUN conda config --add channels diffpy
@@ -14,3 +15,4 @@ RUN conda create -n mcvine -c mcvine/label/unstable mcvine=1.4.0 mcvine-core=1.4
 SHELL ["conda", "run", "-n", "mcvine", "/bin/bash", "-c"]
 RUN git clone https://github.com/yxqd/dotmantid ~/.mantid
 RUN mcvine
+RUN python -c "from mantid import simpleapi"
