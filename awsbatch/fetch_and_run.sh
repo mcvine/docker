@@ -9,7 +9,7 @@ ZIPFILE=$2
 CMD=$3
 OUT=$4
 ZIP_URL="s3://"$S3_BUCKET/$ZIPFILE
-OUTZIP_URL="s3://"S3_BUCKET/$OUT
+OUTZIP_URL="s3://"$S3_BUCKET/$OUT
 
 # Check that necessary programs are available
 which aws >/dev/null 2>&1 || error_exit "Unable to find AWS CLI executable."
