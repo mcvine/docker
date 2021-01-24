@@ -11,14 +11,9 @@ OUT=$4
 ZIP_URL="s3://"$S3_BUCKET/$ZIPFILE
 OUTZIP_URL="s3://"$S3_BUCKET/$OUT
 
-# Check that necessary programs are available
-which aws >/dev/null 2>&1 || error_exit "Unable to find AWS CLI executable."
-which unzip >/dev/null 2>&1 || error_exit "Unable to find unzip executable."
-
-
 # conda
 eval "$(conda shell.bash hook)"
-# conda activate mcvine
+conda activate mcvine
 
 BASENAME="${0##*/}"
 
@@ -27,6 +22,10 @@ error_exit () {
     echo "${BASENAME} - ${1}" >&2
     exit 1
 }
+
+# Check that necessary programs are available
+which aws >/dev/null 2>&1 || error_exit "Unable to find AWS CLI executable."
+which unzip >/dev/null 2>&1 || error_exit "Unable to find unzip executable."
 
 # Create a temporary directory to hold the downloaded contents, and make sure
 # it's removed later, unless the user set KEEP_BATCH_FILE_CONTENTS.
