@@ -22,9 +22,9 @@ aws_settings = dict(
 
 def submit(
         name, zippath, cmd,
-        definition="mcvine_fetch_and_run_16cores_32G_3hours:1",
+        definition="mcvine_fetch_and_run_16cores_32G_3hours_100G:1",
         wait=False,
-        queue="mcvine-16-queue"):
+        queue="mcvine-16VCPU-100G_STORAGE"):
     """
     """
     if zippath.startswith('s3://'):
