@@ -10,6 +10,7 @@ CMD=$3
 OUT=$4
 ZIP_URL="s3://"$S3_BUCKET/$ZIPFILE
 OUTZIP_URL="s3://"$S3_BUCKET/$OUT
+WORKDIR=$PWD
 
 # conda
 eval "$(conda shell.bash hook)"
@@ -40,7 +41,7 @@ cleanup () {
 trap 'cleanup' EXIT HUP INT QUIT TERM
 # mktemp arguments are not very portable.  We make a temporary directory with
 # portable arguments, then use a consistent filename within.
-TMPDIR="$(mktemp -d -t tmp.XXXXXXXXX)" || error_exit "Failed to create temp directory."
+TMPDIR="$(mktemp -d -p ${WORKDIR} -t tmp.XXXXXXXXX)" || error_exit "Failed to create temp directory."
 TMPFILE="${TMPDIR}/batch-file-temp"
 install -m 0600 /dev/null "${TMPFILE}" || error_exit "Failed to create temp file."
 

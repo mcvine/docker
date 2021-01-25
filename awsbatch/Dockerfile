@@ -9,5 +9,6 @@ RUN conda install awscli
 
 ADD fetch_and_run.sh /usr/local/bin/fetch_and_run.sh
 RUN chmod +x /usr/local/bin/fetch_and_run.sh
-WORKDIR /tmp
+RUN mkdir -p /work
+WORKDIR /work
 ENTRYPOINT ["/usr/local/bin/fetch_and_run.sh"]
