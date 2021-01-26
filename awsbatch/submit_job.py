@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 """
-Each job has a unique directory in {s3projectdir}/jobs/
+Each job has a unique directory in jobs/
 It contains
 
 * The data zip file
 """
 
-s3bucket = 'sts-mcvine'
-s3projectdir = "batch"
-s3jobsdir = s3projectdir + "/jobs"
-# s3jobsdir: batch/jobs
-# its full url: s3://sts-mcvine/batch/jobs/
+s3bucket = 'sts-mcvine-batch'
+s3jobsdir = "jobs"
+# s3jobsdir: jobs
+# its full url: s3://sts-mcvine-batch/jobs/
 
 import os, sh, boto3
 aws_settings = dict(
@@ -21,30 +20,35 @@ aws_settings = dict(
 # os.environ.update(aws_settings)
 
 def submit(
-        name, zippath, cmd,
-        definition="mcvine_fetch_and_run_16cores_32G_3hours:1",
+        name, zippath, cmd, outdir='',
+        queue="mcvine-128VCPU-1TB_STORAGE",
         wait=False,
-        queue="mcvine-16-queue"):
+        definition="mcvine_fetch_and_run_16cores_32G_24hours_mount-host-tmp:1",
+):
     """
     """
     if zippath.startswith('s3://'):
         assert zippath.startswith('s3://'+s3bucket)
     uniquename = unique_name(name)
-    s3jobdir = '{}/{}'.format(s3jobsdir, uniquename)
+    if outdir:
+        s3jobdir = '{}/{}/{}'.format(s3jobsdir, outdir, uniquename)
+    else:
+        s3jobdir = '{}/{}'.format(s3jobsdir, uniquename)
     s3zippath = prepare_s3_jobdir(zippath, cmd, s3jobdir)
     import time
     client = boto3.client('batch')
     env = []
     zipbasename = os.path.basename(zippath)
     command = [
-        s3bucket, s3zippath.lstrip('s3://'+s3bucket), cmd,
+        s3bucket, remove_prefix(s3zippath, 's3://'+s3bucket+'/'), cmd,
         '{}/out.zip'.format(s3jobdir)]
     print(command)
+    jobQueue='arn:aws:batch:us-east-1:668650830132:job-queue/{}'.format(queue)
+    jobDefinition=('arn:aws:batch:us-east-1:668650830132:'
+                   'job-definition/{}'.format(definition))
+    print(jobQueue, jobDefinition)
     response = client.submit_job(
-        jobName=uniquename,
-        jobQueue='arn:aws:batch:us-east-1:668650830132:job-queue/{}'.format(queue),
-        jobDefinition=('arn:aws:batch:us-east-1:668650830132:'
-                       'job-definition/{}'.format(definition)),
+        jobName=uniquename, jobQueue=jobQueue, jobDefinition=jobDefinition,
         containerOverrides=dict(environment=env, command=command),
     )
     print(response)
@@ -59,6 +63,10 @@ def submit(
             finished = status in ['SUCCEEDED', 'FAILED']
             if finished: break
     return
+
+def remove_prefix(s, prefix):
+    assert s.startswith(prefix)
+    return s[len(prefix):]
 
 def prepare_s3_jobdir(zippath, cmd, s3jobdir):
     s3cp = sh.aws.bake('s3', 'cp')

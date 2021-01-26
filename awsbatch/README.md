@@ -1,7 +1,7 @@
 TODO: 
 * Limit permissions
 * change s3 bucket
-* change compute env to have ssh key
+* change compute env to have ssh key. change security group
 * use m4.16x for compute env?
 
 # Compute env
