@@ -21,7 +21,7 @@ aws_settings = dict(
 
 def submit(
         name, zippath, cmd, outdir='',
-        queue="mcvine-128VCPU-1TB_STORAGE",
+        queue="mcvine-128VCPU-3TB_STORAGE",
         wait=False,
         definition="mcvine_fetch_and_run_16cores_32G_24hours_mount-host-tmp:1",
 ):
